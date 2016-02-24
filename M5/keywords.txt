@@ -1,0 +1,65 @@
+#######################################
+# Syntax Coloring Map M5
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+M5	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+end	KEYWORD2
+transfer	KEYWORD2
+setBitOrder	KEYWORD2
+setDataMode	KEYWORD2
+PutChar	KEYWORD2
+Init	KEYWORD2
+ClearScreen	KEYWORD2
+setClockDivider	KEYWORD2
+UserMode	KEYWORD2
+PutDoubleChar	KEYWORD2
+PutStr	KEYWORD2
+PutDoubleStr	KEYWORD2
+FullScreen	KEYWORD2
+PutChar_Other	KEYWORD2
+PutDoubleChar_Other	KEYWORD2
+PutStr_Other	KEYWORD2
+PutDoubleStr_Other	KEYWORD2
+DrawPoint	KEYWORD2
+ClearPoint	KEYWORD2
+DrawLine	KEYWORD2
+ClearLine	KEYWORD2
+DrawRectangle	KEYWORD2
+ClearRectangle	KEYWORD2
+DrawRect_Ent	KEYWORD2
+ClearRect_Ent	KEYWORD2
+DrawRect_cham	KEYWORD2
+ClearRect_cham	KEYWORD2
+PutStrLine	KEYWORD2
+ClearStrLine	KEYWORD2
+ClearSpace	KEYWORD2
+DrawFullScreen	KEYWORD2
+Adjust	KEYWORD2
+Contrast	KEYWORD2
+GetKey	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+M5_CLOCK_DIV4	LITERAL1
+M5_CLOCK_DIV16	LITERAL1
+M5_CLOCK_DIV64	LITERAL1
+M5_CLOCK_DIV128	LITERAL1
+M5_CLOCK_DIV2	LITERAL1
+M5_CLOCK_DIV8	LITERAL1
+M5_CLOCK_DIV32	LITERAL1
+M5_CLOCK_DIV64	LITERAL1
+M5_MODE0	LITERAL1
+M5_MODE1	LITERAL1
+M5_MODE2	LITERAL1
+M5_MODE3	LITERAL1
