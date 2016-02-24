@@ -6,3 +6,5 @@ Now you can use M5 core module
 4.copy the libraries directory into Arduino\
 5.open the Kidsbox_gizwits.ino 
 Now you can use gizwits cloud service
+
+6.install IOE_Demo_V1.5.9_2016020616.apk on your android phone
