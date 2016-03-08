@@ -28,7 +28,7 @@
 #define	P0_VER				"00000004"
 #define	HARD_VER			"02030000"
 #define	SOFT_VER			"02030001"
-#define	PRODUCT_KEY		"6f3074fe43894547a4f1314bd7e3ae0b"
+#define	PRODUCT_KEY	"74e1cb642043430cb56d9137e658f1f9"  ///Curiousbox"ba9d369945ef4bb3bd4d3b449a2c1dc8"    ///默认"6f3074fe43894547a4f1314bd7e3ae0b"
 
 #define MAX_P0_LEN			128 	 		 //p0˽¾ޗ³¤¶ƍ
 #define MAX_PACKAGE_LEN		(MAX_P0_LEN*2) 	 //˽¾ݻº³戸خ´󳤶ƍ

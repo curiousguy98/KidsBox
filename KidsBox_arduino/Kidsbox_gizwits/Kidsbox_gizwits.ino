@@ -383,7 +383,7 @@ void KEY_Handle(void)
   {
     GizWits_D2WConfigCmd(SoftAp_Mode);
     NetConfigureFlag = 1;
-    M5.PutS(16,24,"→_→ ");
+    M5.PutS(16,24,"(^o^)");
  }
   else if(M5_key_value &2)
   { 
@@ -391,12 +391,12 @@ void KEY_Handle(void)
     GizWits_D2WConfigCmd(AirLink_Mode);
     NetConfigureFlag = 1;
     char * show_str = "-____-";
-    M5.PutDoubleStr(16,24,show_str);
+    M5.PutS_2X(16,24,show_str);
   }
   else if(M5_key_value &4)
   {
     char * show_str = "(*@^@*)";
-    M5.PutDoubleStr(16,24,show_str);
+    M5.PutS_2X(16,24,show_str);
   }
         
 }
@@ -468,20 +468,24 @@ void NeoPixel_RGB(int R, int G, int B)
     delay(delayval); // Delay for a period of time (in milliseconds).
 
   }
-  ///Serial.println("ryan pixel loop");
 }
 
 void setup()
 {
   ///Serial.begin(9600);
   pixels.begin();
-
+  
   M5.Init();
-  M5.UserMode();
-  M5.ClearScreen();
-  char * show_str = "(^o^)";
-  M5.PutDoubleStr(24,20,show_str);
+  M5.SetKeyLightTime(20);
+  M5.KeyBeepEnable();
+  M5.Light(0);
+  M5.ClearScreen();//while(M5.IsBusy());
+  M5.HideM5Logo(); ///Make the LOGO disappear
+  M5.HideRunLogo(); ///Make the RUN icon disappear
 
+  char * show_str = "(^o^)";
+  M5.PutS_2X(24,20,show_str);
+  
   GoKit_Init();
 
 #if (DEBUG==1)
@@ -562,10 +566,9 @@ void GizWits_ControlDeviceHandle(void)
       ReadTypeDef.LED_B = 0;
       
       M5.ClearScreen();
-      char * show_str = "Y(^_^)Y";
-      M5.PutDoubleStr(12,20,show_str);
+      M5.PutS_2X(12,20, "-____-");
   
-      ///NeoPixel_RGB(254, 254, 0);
+      NeoPixel_RGB(254, 254, 0);
 #if(DEBUG==1)
       mySerial.print(F("SetLED LED_Yellow")); mySerial.println("");
 #endif
@@ -580,10 +583,9 @@ void GizWits_ControlDeviceHandle(void)
       Set_LedStatus = 1;
       
       M5.ClearScreen();
-      char * show_str = "(+_+)?";
-      M5.PutDoubleStr(20,20,show_str);
+      M5.PutS_2X(20,20,"(+_+)?");
             
-      ///NeoPixel_RGB(254, 0, 70);
+      NeoPixel_RGB(254, 0, 70);
 #if(DEBUG==1)
       mySerial.print(F("SetLED LED_Purple")); mySerial.println("");
 #endif
@@ -597,10 +599,9 @@ void GizWits_ControlDeviceHandle(void)
       Set_LedStatus = 1;
       
       M5.ClearScreen();
-      char * show_str = "(T_T) ";
-      M5.PutDoubleStr(24,20,show_str);
+      M5.PutS_2X(24,20,"(T_T)");
             
-      ///NeoPixel_RGB(238 , 30 , 30);
+      NeoPixel_RGB(238 , 30 , 30);
 #if(DEBUG==1)
       mySerial.print(F("SetLED LED_Pink")); mySerial.println("");
 #endif

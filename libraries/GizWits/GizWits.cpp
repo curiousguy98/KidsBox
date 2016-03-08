@@ -15,6 +15,8 @@
 #include "GizWits.h"
 #include <MsTimer2.h>
 
+#define M5_VERSION
+
 UART_HandleTypeDef UART_HandleStruct;
 Pro_M2W_ReturnInfoTypeDef Pro_M2W_ReturnInfoStruct;
 Pro_Wait_AckTypeDef Wait_AckStruct;
@@ -69,6 +71,20 @@ void gokit_timer(void)
  *    return      : none.
  *    Add by Alex.lin    --2014-12-24
 ******************************************************/
+
+#ifdef M5_VERSION
+void serialEvent1(void)
+{
+	uint8_t value = 0;
+	value = (unsigned char)Serial1.read();
+	if(rb_can_write(&u_ring_buff) > 0)
+	{
+		rb_write(&u_ring_buff, &value, 1);
+	}
+
+	mySerial.println(value, HEX);//不加这句容易出BUG
+}
+#else
 void serialEvent(void)
 {
 	uint8_t value = 0;
@@ -80,6 +96,7 @@ void serialEvent(void)
 
 	mySerial.println(value, HEX);//不加这句容易出BUG
 }
+#endif	
 
 uint8_t GizWits_W2D_AckCmdHandle(void)
 {
@@ -145,8 +162,13 @@ void Pro_UART_SendBuf(uint8_t *Buf, uint16_t PackLen, uint8_t Tag)
 
 	for(i=0; i < PackLen; i++)
 	{
-		Serial.write(Buf[i]);
+#ifdef M5_VERSION
+		Serial1.write(Buf[i]);
+		if(i >=2 && Buf[i] == 0xFF) Serial1.write(0x55);    // add 0x55 while across 0xff except head. 		
+#else		
+		Serial.write(Buf[i]);	
 		if(i >=2 && Buf[i] == 0xFF) Serial.write(0x55);    // add 0x55 while across 0xff except head. 
+#endif				
 	}
 	
     //若为主动上报需判断返回的ACK
@@ -231,8 +253,12 @@ uint8_t CheckSum( uint8_t *buf, int packLen )
 void GizWits_init(uint8_t P0_Len)
 {
 	Pro_HeadPartP0CmdTypeDef *Pro_D2W_ReportStatusStruct = (Pro_HeadPartP0CmdTypeDef *)g_DevStatus;
-	
+
+#ifdef M5_VERSION
+	Serial1.begin(9600); 
+#else	
 	Serial.begin(9600); 
+#endif	
 	#if(GetFrame==1)
 	//自定义引脚通信SoftwareSerial初始
 	mySerial.begin(9600);
@@ -340,8 +366,13 @@ uint8_t GizWits_D2W_Resend_AckCmdHandle(void)
                 //需重发
                 for(uint8_t i = 0; i < (sizeof(Pro_HeadPartP0CmdTypeDef) + g_P0DataLen + 1); i++)
                 {
-					Serial.write(Wait_AckStruct.Cmd_Buff[i]);
+#ifdef M5_VERSION
+					Serial1.write(Wait_AckStruct.Cmd_Buff[i]);
+					if(i >=2 && Wait_AckStruct.Cmd_Buff[i] == 0xFF) Serial1.write(0x55);    // add 0x55 while across 0xff except head. 
+#else                	
+					Serial.write(Wait_AckStruct.Cmd_Buff[i]);				
 					if(i >=2 && Wait_AckStruct.Cmd_Buff[i] == 0xFF) Serial.write(0x55);    // add 0x55 while across 0xff except head. 
+#endif							
                 }
                 Wait_AckStruct.SendTime = SystemTimeCount;
                 Wait_AckStruct.SendNum++;
