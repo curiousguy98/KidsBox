@@ -73,9 +73,13 @@
 #define Set_Bit(val,bitn) (val |=(1<<(bitn)))
 #define Clr_Bit(val,bitn) (val &=~(1<<(bitn)))
 #define Get_Bit(val,bitn) (val &(1<<(bitn)))
-#define M328CS1 Set_Bit(PORTD,5)
-#define M328CS0 Clr_Bit(PORTD,5)
-#define SET_M328CS_OUTPUT  Set_Bit(DDRB,5)
+#define M328CS1 Set_Bit(PORTB,0)
+#define M328CS0 Clr_Bit(PORTB,0)
+#define SET_M328CS_OUTPUT  Set_Bit(DDRB,0)
+#define SET_M328INT_INPUT  Clr_Bit(DDRD,5)
+#define M328INT (PIND&0x20)==0x20
+#define M328INT1 Set_Bit(PORTD,5)
+#define M328INT0 Clr_Bit(PORTD,5)
 #define uchar uint8_t
 
 class M5Settings {
@@ -185,7 +189,8 @@ public:
   // this function is used to gain exclusive access to the M5 bus
   // and configure the correct settings.
   inline static void beginTransaction(M5Settings settings) {
-    if (interruptMode > 0) {
+	//  begin();
+	  if (interruptMode > 0) {
       uint8_t sreg = SREG;
       noInterrupts();
 
@@ -208,10 +213,18 @@ public:
     }
     inTransactionFlag = 1;
     #endif
-
+	
     SPCR = settings.spcr;
     SPSR = settings.spsr;
-  }
+	delayMicroseconds(25);
+	M328CS0;
+	/*
+	pinMode(MOSI,OUTPUT);
+	pinMode(MISO,INPUT);
+	pinMode(SCK,OUTPUT);
+	
+	*/
+}
 
   // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
   inline static uint8_t transfer(uint8_t data) {
@@ -225,6 +238,7 @@ public:
     asm volatile("nop");
     while (!(SPSR & _BV(SPIF))) ; // wait
 	asm volatile("nop");
+	delayMicroseconds(30);
     return SPDR;
   }
   inline static uint16_t transfer16(uint16_t data) {
@@ -292,6 +306,21 @@ public:
         SREG = interruptSave;
       }
     }
+	M328CS1;
+	 //SPCR &= ~_BV(SPE);
+	//end();
+	//delayMicroseconds(30);
+	/*
+	pinMode(MOSI,INPUT);
+	pinMode(MISO,INPUT);
+	pinMode(SCK,INPUT);
+	pinMode(SS,INPUT);
+	digitalWrite(MOSI, HIGH);
+	digitalWrite(MISO, HIGH);
+	digitalWrite(SCK, HIGH);
+	*/
+	//pinMode(SCK, INPUT);
+    //pinMode(MOSI, INPUT);
   }
 
   // Disable the M5 bus
@@ -299,16 +328,63 @@ public:
   
   //Initialize the M5 Board
   static void Init();
-  
-  //Switch the user mode
-  static void UserMode();
-  static void PutS(uchar x,uchar y,char* s);
+  static bool IsFree();
+  static bool IsBusy();
+  //////////Set M5 device//////////
+  static void SetEncoderMode(uint8_t m);
+  static void KeyBeepEnable();
+  static void KeyBeepDisable();
+  static void SetKeyLightTime(uchar t);
+  static void ShowRunLogo();
+  static void HideRunLogo();
+  static void SetRunLogoXY(uint8_t x,uint8_t y);
+  static void ShowM5Logo();
+  static void HideM5Logo();
+  static void SetM5LogoXY(uint8_t x,uint8_t y);
+  static void BeepEnable();
+  static void BeepDisable();
+  static void SetBeepTime(uint8_t t1,uint8_t t2);
+  static void Beep();
+  static void Beep1(uint8_t t1,uint8_t t2);
+  static void SetButtonA(uint8_t length,char* p);
+  static void SetButtonB(uint8_t length,char* p);
+  static void SetButtonC(uint8_t length,char* p);
+  //////////M5 LCD Function/////////
+ 
+    //Adjust the contrast M5 LCD brightness
+  static void Contrast(uint8_t ratio);  
+  //Adjust the contrast M5 LCD Contrast ratio
+  static void Light(uint8_t light);
+
+
   //Clear the LCD
   static void ClearScreen();
-  
+  static void FullScreen();
+    //M5 output to draw point
+  static void SetPixel(uint8_t x,uint8_t y);  
+  //M5 output to clear point
+  static void ClearPixel(uint8_t x,uint8_t y);
   //M5 output characters
-  static void PutChar(uint8_t x,uint8_t y,char ch);
-  
+  static void PutCh(uint8_t x,uint8_t y,char ch);
+  static void PutCh_(uint8_t x,uint8_t y,char ch);
+  static void PutCh_2X(uint8_t x,uint8_t y,char ch);
+  static void PutCh_2X_(uint8_t x,uint8_t y,char ch);
+  static void PutS(uchar x,uchar y,char* s);
+  static void PutS_(uchar x,uchar y,char* s);
+  static void PutS_2X(uchar x,uchar y,char* s);
+  static void PutS_2X_(uchar x,uchar y,char* s);
+  static void Line(uchar x1,uchar y1,uchar x2,uchar y2);
+  static void Line_(uchar x1,uchar y1,uchar x2,uchar y2);
+  static void Rect(uchar x1,uchar y1,uchar x2,uchar y2);
+  static void Rect_(uchar x1,uchar y1,uchar x2,uchar y2);
+  static void FillRect(uchar x1,uchar y1,uchar x2,uchar y2);
+  static void ClearRect(uchar x1,uchar y1,uchar x2,uchar y2);
+
+
+
+
+
+
   //M5 output double characters
   static void PutDoubleChar(uint8_t x,uint8_t y,char ch);
   
@@ -318,26 +394,16 @@ public:
   //M5 output double size of character string
   static void PutDoubleStr(uint8_t x,uint8_t y,void *buf);
 
-  //M5 output Full screen the LCD
-  static void FullScreen();
-  
-  //M5 output other side characters
-  static void PutChar_Other(uint8_t x,uint8_t y,char ch);
-  
+
   //M5 output other side double characters
   static void PutDoubleChar_Other(uint8_t x,uint8_t y,char ch);
   
-  //M5 output other side character string
-  static void PutStr_Other(uint8_t x,uint8_t y,void *buf);
+
   
   //M5 output other side double size of character string
   static void PutDoubleStr_Other(uint8_t x,uint8_t y,void *buf); 
-  
-  //M5 output to draw point
-  static void DrawPoint(uint8_t x,uint8_t y);
-  
-  //M5 output to clear point
-  static void ClearPoint(uint8_t x,uint8_t y);
+  static void PutStr_Other(uint8_t x,uint8_t y,void *buf); 
+
   
   //M5 output to Draw line
   static void DrawLine(uint8_t x1,uint8_t y1,uint8_t x2,uint8_t y2);
@@ -378,11 +444,7 @@ public:
   //M5 output bmp 
   static void DrawFullScreen(void *buf);
   
-  //Adjust the contrast M5 LCD brightness
-  static void Adjust(uint8_t LIGHT);
-  
-  //Adjust the contrast M5 LCD Contrast ratio
-  static void Contrast(uint8_t ratio);
+
   void PrintBmp(uint16_t index ,void *buf);
   
   //get anything press key 
